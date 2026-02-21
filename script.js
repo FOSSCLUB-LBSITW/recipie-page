@@ -30,3 +30,12 @@ document.getElementById("searchBtn").addEventListener("click", function() {
         resultsDiv.innerHTML = "<p>Error loading recipes!</p>";
     });
 });
+// Clear button functionality
+const clearBtn = document.getElementById("clearBtn");
+const searchBox = document.getElementById("searchBox");
+const resultsDiv = document.getElementById("results");
+
+clearBtn.addEventListener("click", function () {
+    searchBox.value = "";        // clears input
+    resultsDiv.innerHTML = "";   // clears search results
+});

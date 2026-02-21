@@ -25,13 +25,13 @@ h1 {
 }
 
 #searchBox {
-  width: 70%;
+  width: 50%;
   padding: 10px;
   border-radius: 8px;
   border: 1px solid #ccc;
 }
 
-#searchBtn {
+#searchBtn, #clearBtn {
   padding: 10px 15px;
   border: none;
   border-radius: 8px;
@@ -41,7 +41,7 @@ h1 {
   transition: 0.3s;
 }
 
-#searchBtn:hover {
+#searchBtn:hover, #clearBtn:hover {
   background: #ff5733;
 }
 
