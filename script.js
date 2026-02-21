@@ -4,12 +4,13 @@ document.getElementById("searchBtn").addEventListener("click", function() {
 
     resultsDiv.innerHTML = "<p>Searching recipes for <b>" + query + "</b>...</p>";
 
-    // BUG 1: Wrong API URL (typo in "themealdb")
-    fetch("https://www.themeald.com/api/json/v1/1/search.php?s=" + query)
+    // FIX 1: Correct API URL
+    fetch("https://www.themealdb.com/api/json/v1/1/search.php?s=" + query)
     .then(res => res.json())
     .then(data => {
-        // BUG 2: Wrong property name (mealsData instead of meals)
-        let meals = data.mealsData;
+
+        // FIX 2: Correct property name
+        let meals = data.meals;
 
         if (!meals) {
             resultsDiv.innerHTML = "<p>No recipes found. Try again!</p>";
@@ -17,16 +18,24 @@ document.getElementById("searchBtn").addEventListener("click", function() {
         }
 
         resultsDiv.innerHTML = "";
+
         meals.forEach(meal => {
-            // BUG 3: Wrong key (meal.title instead of meal.strMeal)
+
+            // FIX 3: Correct key name
             let div = document.createElement("div");
             div.classList.add("recipe");
-            div.innerHTML = `<h3>${meal.title}</h3>
-                             <p>${meal.strInstructions.substring(0, 100)}...</p>`;
+
+            div.innerHTML = `
+                <h3>${meal.strMeal}</h3>
+                <img src="${meal.strMealThumb}" width="200">
+                <p>${meal.strInstructions.substring(0, 100)}...</p>
+            `;
+
             resultsDiv.appendChild(div);
         });
     })
     .catch(err => {
+        console.error(err);
         resultsDiv.innerHTML = "<p>Error loading recipes!</p>";
     });
 });
