@@ -10,6 +10,16 @@ body {
     color: #333;
 }
 
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background: url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1350&q=80') no-repeat center center;
+  filter: blur(5px) brightness(0.85);
+  z-index: -1;
+  transform: scale(1.05);
+}
+
 /* NAVBAR */
 .navbar {
     display: flex;
