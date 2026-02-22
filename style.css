@@ -113,18 +113,3 @@ body {
   margin-left: 5px;
 }
 
-.clear-category {
-  background: #ff4d4d;
-  color: black;
-  border: none;
-  padding: 8px 10px;
-  border-radius: 50%;
-  cursor: pointer;
-  margin-left: 5px;
-  font-size: 14px;
-  transition: 0.3s;
-}
-
-.clear-category:hover {
-  background: #cc0000;
-}

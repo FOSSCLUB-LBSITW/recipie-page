@@ -1,0 +1,110 @@
+/* ================= product.css ================= */
+
+/* BODY & BACKGROUND */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
+    background-size: cover;
+    color: #333;
+}
+
+/* NAVBAR */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ff6b6b;
+    padding: 15px 30px;
+    color: white;
+}
+
+.navbar .logo {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.back-btn {
+    padding: 8px 16px;
+    font-size: 16px;
+    background: white;
+    color: #ff6b6b;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.back-btn:hover {
+    background: #ffe0e0;
+}
+
+/* CONTAINER */
+.container {
+    max-width: 900px;
+    margin: 30px auto;
+    background: rgba(255, 255, 255, 0.95);
+    border-radius: 15px;
+    padding: 30px 40px;
+    box-shadow: 0 6px 25px rgba(0,0,0,0.3);
+}
+
+/* RECIPE DETAIL */
+.recipe-detail h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+.recipe-detail p {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+.recipe-detail img.recipe-img {
+    width: 100%;
+    max-width: 500px;
+    display: block;
+    margin: 20px auto;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+}
+
+.recipe-detail h3 {
+    font-size: 22px;
+    margin-top: 25px;
+    margin-bottom: 10px;
+    color: #ff6b6b;
+}
+
+.recipe-detail ul {
+    list-style-type: disc;
+    padding-left: 20px;
+}
+
+.recipe-detail li {
+    margin-bottom: 6px;
+    font-size: 16px;
+}
+
+/* RESPONSIVE DESIGN */
+@media screen and (max-width: 768px) {
+    .container {
+        padding: 20px;
+        margin: 20px;
+    }
+
+    .recipe-detail h2 {
+        font-size: 24px;
+    }
+
+    .recipe-detail h3 {
+        font-size: 20px;
+    }
+
+    .back-btn {
+        padding: 6px 12px;
+        font-size: 14px;
+    }
+}

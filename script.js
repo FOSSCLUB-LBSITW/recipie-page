@@ -40,48 +40,49 @@ clearBtn.addEventListener("click", function () {
     resultsDiv.innerHTML = "";   // clears search results
 });
 
-window.addEventListener("load", function () {
+function displayMeals(meals, showInstructions = true) {
+    resultsDiv.innerHTML = "";
 
+    meals.forEach(meal => {
+        let div = document.createElement("div");
+        div.classList.add("recipe-card");
+
+        div.innerHTML = `
+            <a href="product-detail.html?name=${encodeURIComponent(meal.strMeal)}" class="recipe-link">
+                <img src="${meal.strMealThumb}" alt="${meal.strMeal}">
+                <h3>${meal.strMeal}</h3>
+                ${showInstructions ? `<p>${meal.strInstructions.substring(0, 100)}...</p>` : ""}
+            </a>
+        `;
+
+        resultsDiv.appendChild(div);
+    });
+}
+
+// Load all recipes on page load
+window.addEventListener("load", function () {
     resultsDiv.innerHTML = "<p>Loading all recipes...</p>";
 
     fetch("https://www.themealdb.com/api/json/v1/1/search.php?s=")
         .then(res => res.json())
         .then(data => {
-
             if (!data.meals) {
                 resultsDiv.innerHTML = "<p>No recipes found.</p>";
                 return;
             }
-
-            resultsDiv.innerHTML = "";
-
-            data.meals.forEach(meal => {
-                let div = document.createElement("div");
-                div.classList.add("recipe-card");
-
-                div.innerHTML = `
-                    <img src="${meal.strMealThumb}" alt="${meal.strMeal}">
-                    <h3>${meal.strMeal}</h3>
-                    <p>${meal.strInstructions.substring(0, 100)}...</p>
-                `;
-
-                resultsDiv.appendChild(div);
-            });
+            displayMeals(data.meals);
         })
         .catch(() => {
             resultsDiv.innerHTML = "<p>Error loading recipes!</p>";
         });
 });
 
-// ✅ CATEGORY FILTER FEATURE
-const categoryFilter = document.getElementById("categoryFilter");
-
+// Category filter
 categoryFilter.addEventListener("change", function () {
     const category = this.value;
 
     if (category === "") {
-        // Load all recipes again
-        window.dispatchEvent(new Event("load"));
+        window.dispatchEvent(new Event("load")); // Reload all recipes
         return;
     }
 
@@ -90,25 +91,13 @@ categoryFilter.addEventListener("change", function () {
     fetch("https://www.themealdb.com/api/json/v1/1/filter.php?c=" + category)
         .then(res => res.json())
         .then(data => {
-
             if (!data.meals) {
                 resultsDiv.innerHTML = "<p>No recipes found.</p>";
                 return;
             }
 
-            resultsDiv.innerHTML = "";
-
-            data.meals.forEach(meal => {
-                let div = document.createElement("div");
-                div.classList.add("recipe-card");
-
-                div.innerHTML = `
-                    <img src="${meal.strMealThumb}" alt="${meal.strMeal}">
-                    <h3>${meal.strMeal}</h3>
-                `;
-
-                resultsDiv.appendChild(div);
-            });
+            // Note: Filter API does not return instructions, so hide description
+            displayMeals(data.meals, false);
         })
         .catch(() => {
             resultsDiv.innerHTML = "<p>Error loading recipes!</p>";

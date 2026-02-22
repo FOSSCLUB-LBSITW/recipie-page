@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recipe Detail</title>
+  <link rel="stylesheet" href="product.css">
+</head>
+
+<body>
+
+  <!-- ✅ NAVBAR -->
+  <nav class="navbar">
+    <div class="logo">🍲 Recipe Finder</div>
+    <button onclick="window.history.back()" class="back-btn">⬅ Back</button>
+  </nav>
+
+  <!-- ✅ RECIPE DETAIL SECTION -->
+  <div class="container">
+    <div id="recipe-detail" class="recipe-detail">
+      <!-- Content will be filled by JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    // Get recipe id from query parameter
+    const params = new URLSearchParams(window.location.search);
+    const recipeName = params.get('name'); // we can pass name or id when linking from main page
+
+    const detailDiv = document.getElementById("recipe-detail");
+
+    if (!recipeName) {
+      detailDiv.innerHTML = "<p>No recipe selected!</p>";
+    } else {
+      // Fetch recipe details by name
+      fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${recipeName}`)
+        .then(res => res.json())
+        .then(data => {
+          const meal = data.meals[0];
+
+          if (!meal) {
+            detailDiv.innerHTML = "<p>Recipe not found!</p>";
+            return;
+          }
+
+          // Build ingredients list
+          let ingredients = "";
+          for (let i = 1; i <= 20; i++) {
+            const ingredient = meal[`strIngredient${i}`];
+            const measure = meal[`strMeasure${i}`];
+            if (ingredient && ingredient.trim() !== "") {
+              ingredients += `<li>${ingredient} - ${measure}</li>`;
+            }
+          }
+
+          detailDiv.innerHTML = `
+            <h2>${meal.strMeal}</h2>
+            <p><strong>Category:</strong> ${meal.strCategory}</p>
+            <img src="${meal.strMealThumb}" alt="${meal.strMeal}" class="recipe-img"/>
+            <h3>Ingredients:</h3>
+            <ul>${ingredients}</ul>
+            <h3>Instructions:</h3>
+            <p>${meal.strInstructions}</p>
+          `;
+        })
+        .catch(() => {
+          detailDiv.innerHTML = "<p>Error loading recipe details!</p>";
+        });
+    }
+  </script>
+
+</body>
+
+</html>
