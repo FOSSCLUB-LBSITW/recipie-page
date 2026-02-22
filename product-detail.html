@@ -18,58 +18,104 @@
 
   <!-- ✅ RECIPE DETAIL SECTION -->
   <div class="container">
-    <div id="recipe-detail" class="recipe-detail">
-      <!-- Content will be filled by JavaScript -->
-    </div>
+  <div id="recipe-detail" class="recipe-detail"></div>
+
+  <!-- Controls -->
+  <div class="speech-controls" style="display:none;">
+    <button id="readBtn" class="speaker-btn">🔊 Read</button>
+    <button id="stopBtn" class="speaker-btn">⏹ Stop</button>
   </div>
+</div>
 
-  <script>
-    // Get recipe id from query parameter
-    const params = new URLSearchParams(window.location.search);
-    const recipeName = params.get('name'); // we can pass name or id when linking from main page
+<script>
+const params = new URLSearchParams(window.location.search);
+const recipeName = params.get('name');
 
-    const detailDiv = document.getElementById("recipe-detail");
+const detailDiv = document.getElementById("recipe-detail");
+const readBtn = document.getElementById("readBtn");
+const stopBtn = document.getElementById("stopBtn");
+const speechControls = document.querySelector(".speech-controls");
 
-    if (!recipeName) {
-      detailDiv.innerHTML = "<p>No recipe selected!</p>";
-    } else {
-      // Fetch recipe details by name
-      fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${recipeName}`)
-        .then(res => res.json())
-        .then(data => {
-          const meal = data.meals[0];
+let instructionsText = ""; // full instructions
+let utterance;
+let lines = [];
+let currentLine = 0;
 
-          if (!meal) {
-            detailDiv.innerHTML = "<p>Recipe not found!</p>";
-            return;
-          }
+function highlightLine(lineIndex) {
+  const paragraphs = detailDiv.querySelectorAll(".instruction-line");
+  paragraphs.forEach((p, idx) => {
+    p.style.background = idx === lineIndex ? "#fffa8b" : "transparent";
+  });
+}
 
-          // Build ingredients list
-          let ingredients = "";
-          for (let i = 1; i <= 20; i++) {
-            const ingredient = meal[`strIngredient${i}`];
-            const measure = meal[`strMeasure${i}`];
-            if (ingredient && ingredient.trim() !== "") {
-              ingredients += `<li>${ingredient} - ${measure}</li>`;
-            }
-          }
+if (!recipeName) {
+  detailDiv.innerHTML = "<p>No recipe selected!</p>";
+} else {
+  fetch(`https://www.themealdb.com/api/json/v1/1/search.php?s=${recipeName}`)
+    .then(res => res.json())
+    .then(data => {
+      const meal = data.meals[0];
+      if (!meal) { detailDiv.innerHTML = "<p>Recipe not found!</p>"; return; }
 
-          detailDiv.innerHTML = `
-            <h2>${meal.strMeal}</h2>
-            <p><strong>Category:</strong> ${meal.strCategory}</p>
-            <img src="${meal.strMealThumb}" alt="${meal.strMeal}" class="recipe-img"/>
-            <h3>Ingredients:</h3>
-            <ul>${ingredients}</ul>
-            <h3>Instructions:</h3>
-            <p>${meal.strInstructions}</p>
-          `;
-        })
-        .catch(() => {
-          detailDiv.innerHTML = "<p>Error loading recipe details!</p>";
-        });
+      let ingredients = "";
+      for (let i=1;i<=20;i++){
+        const ingredient = meal[`strIngredient${i}`];
+        const measure = meal[`strMeasure${i}`];
+        if (ingredient && ingredient.trim() !== "") ingredients += `<li>${ingredient} - ${measure}</li>`;
+      }
+
+      instructionsText = meal.strInstructions;
+
+      // Split instructions into lines for highlighting
+      lines = instructionsText.split(/\. |\n/).filter(line => line.trim() !== "");
+      const instructionHTML = lines.map(line => `<p class="instruction-line">${line}.</p>`).join("");
+
+      detailDiv.innerHTML = `
+        <h2>${meal.strMeal}</h2>
+        <p><strong>Category:</strong> ${meal.strCategory}</p>
+        <img src="${meal.strMealThumb}" alt="${meal.strMeal}" class="recipe-img"/>
+        <h3>Ingredients:</h3>
+        <ul>${ingredients}</ul>
+        <h3>Instructions:</h3>
+        ${instructionHTML}
+      `;
+
+      speechControls.style.display = "inline-block"; // show controls
+    })
+    .catch(() => { detailDiv.innerHTML = "<p>Error loading recipe details!</p>"; });
+}
+
+// ✅ Read Instructions
+readBtn.addEventListener("click", () => {
+  if ('speechSynthesis' in window) {
+    if (speechSynthesis.speaking) return; // prevent multiple utterances
+    currentLine = 0;
+
+    function speakNextLine() {
+      if (currentLine >= lines.length) return;
+      utterance = new SpeechSynthesisUtterance(lines[currentLine]);
+      utterance.rate = 1;
+      utterance.pitch = 1;
+      utterance.onstart = () => highlightLine(currentLine);
+      utterance.onend = () => {
+        currentLine++;
+        speakNextLine();
+      };
+      window.speechSynthesis.speak(utterance);
     }
-  </script>
 
+    speakNextLine();
+  } else {
+    alert("Your browser does not support text-to-speech.");
+  }
+});
+
+// ✅ Stop Instructions
+stopBtn.addEventListener("click", () => {
+  window.speechSynthesis.cancel();
+  highlightLine(-1); // remove highlight
+});
+</script>
 </body>
 
 </html>

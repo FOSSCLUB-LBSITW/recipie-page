@@ -108,3 +108,29 @@ body {
         font-size: 14px;
     }
 }
+
+.speech-controls {
+  margin: 15px 0;
+}
+
+.speaker-btn {
+  font-size: 22px;
+  padding: 6px 12px;
+  margin-right: 10px;
+  cursor: pointer;
+  border-radius: 6px;
+  border: none;
+  background: #ff7b54;
+  color: white;
+  transition: 0.3s;
+}
+
+.speaker-btn:hover {
+  background: #ff5733;
+}
+
+.instruction-line {
+  transition: background 0.3s;
+  padding: 2px 4px;
+  border-radius: 4px;
+}
