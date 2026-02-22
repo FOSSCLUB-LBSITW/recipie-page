@@ -1,40 +1,50 @@
+/* ==============================
+   Recipe Finder CSS - Updated
+   ============================== */
+
 body {
   font-family: Arial, sans-serif;
   margin: 0;
   padding: 0;
-  /* Background image instead of gradient */
   background: url('https://images.unsplash.com/photo-1600891964599-f61ba0e24092?auto=format&fit=crop&w=1350&q=80') no-repeat center center fixed;
-  background-size: cover;
-  height: 100vh;
+  background-size: cover; /* ensures image covers screen */
   display: flex;
   justify-content: center;
   align-items: center;
+  min-height: 100vh;
 }
 
 .container {
-  background: rgba(255, 255, 255, 0.9); /* Slightly transparent white for readability */
-  padding: 20px 30px;
-  border-radius: 15px;
-  box-shadow: 0px 6px 15px rgba(0,0,0,0.2);
-  width: 400px;
+  background: rgba(255, 255, 255, 0.95); /* slightly opaque for readability */
+  padding: 40px 50px;                   /* bigger section */
+  border-radius: 20px;
+  box-shadow: 0px 6px 25px rgba(0,0,0,0.35);
+  width: 90%;
+  max-width: 550px; /* larger section width */
   text-align: center;
 }
 
 h1 {
-  margin-bottom: 20px;
+  margin-bottom: 30px;
+  font-size: 32px;   /* bigger title */
 }
 
 #searchBox {
-  width: 50%;
-  padding: 10px;
-  border-radius: 8px;
+  width: 90%;        /* bigger input */
+  padding: 18px;     /* taller input box */
+  font-size: 18px;   /* larger text */
+  border-radius: 12px;
   border: 1px solid #ccc;
+  margin-bottom: 20px;
+  outline: none;
 }
 
 #searchBtn, #clearBtn {
-  padding: 10px 15px;
+  padding: 18px 30px; /* bigger buttons */
+  font-size: 18px;    /* larger text */
+  margin: 5px;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   background: #ff7b54;
   color: #fff;
   cursor: pointer;
@@ -46,13 +56,59 @@ h1 {
 }
 
 #results {
-  margin-top: 20px;
+  margin-top: 25px;
   text-align: left;
 }
 
 .recipe {
   background: #ffe0b2;
-  padding: 10px;
-  margin: 10px 0;
-  border-radius: 10px;
+  padding: 15px;
+  margin: 12px 0;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.recipe h3 {
+  margin: 0 0 6px 0;
+  font-size: 20px;
+}
+
+.recipe p {
+  margin: 0;
+  font-size: 15px;
+  color: #333;
+}
+
+/* Responsive design for smaller screens */
+@media screen and (max-width: 500px) {
+  .container {
+    padding: 25px 20px;
+    width: 95%;
+  }
+
+  h1 {
+    font-size: 26px;
+  }
+
+  #searchBox {
+    width: 100%;
+    padding: 16px;
+    font-size: 16px;
+  }
+
+  #searchBtn, #clearBtn {
+    width: 48%;
+    padding: 14px;
+    font-size: 16px;
+    margin: 5px 1%;
+  }
+
+  .recipe h3 {
+    font-size: 16px;
+  }
+
+  .recipe p {
+    font-size: 14px;
+  }
 }
