@@ -112,3 +112,61 @@ body {
   border: none;
   margin-left: 5px;
 }
+
+/* ================= ERROR UI ================= */
+
+.error-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(6px);
+}
+.error-overlay {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.error-card button:hover {
+  transform: translateY(-2px);
+}
+.error-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  text-align: center;
+  width: 350px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.error-card h3 {
+  color: #ff6b6b;
+  margin-bottom: 10px;
+}
+
+.error-card p {
+  color: #555;
+  margin-bottom: 8px;
+}
+
+.error-card button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  background: #ff6b6b;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.error-card button:hover {
+  background: #ff4c4c;
+}

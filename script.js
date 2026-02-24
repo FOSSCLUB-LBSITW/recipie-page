@@ -27,7 +27,20 @@ document.getElementById("searchBtn").addEventListener("click", function() {
         });
     })
     .catch(err => {
-        resultsDiv.innerHTML = "<p>Error loading recipes!</p>";
+       resultsDiv.innerHTML = `
+  <div class="error-overlay">
+    <div class="error-card">
+      <h3>⚠ Unable to load recipes</h3>
+      <p>Something went wrong while fetching recipes.</p>
+      <p>Please check your connection and try again.</p>
+      <button id="retryBtn">Retry</button>
+    </div>
+  </div>
+`;
+
+document.getElementById("retryBtn").addEventListener("click", () => {
+    window.location.reload();
+});
     });
 });
 // Clear button functionality
@@ -73,7 +86,20 @@ window.addEventListener("load", function () {
             displayMeals(data.meals);
         })
         .catch(() => {
-            resultsDiv.innerHTML = "<p>Error loading recipes!</p>";
+           resultsDiv.innerHTML = `
+  <div class="error-overlay">
+    <div class="error-card">
+      <h3>⚠ Unable to load recipes</h3>
+      <p>Something went wrong while fetching recipes.</p>
+      <p>Please check your connection and try again.</p>
+      <button id="retryBtn">Retry</button>
+    </div>
+  </div>
+`;
+
+document.getElementById("retryBtn").addEventListener("click", () => {
+    window.location.reload();
+});
         });
 });
 
@@ -100,6 +126,19 @@ categoryFilter.addEventListener("change", function () {
             displayMeals(data.meals, false);
         })
         .catch(() => {
-            resultsDiv.innerHTML = "<p>Error loading recipes!</p>";
+            resultsDiv.innerHTML = `
+  <div class="error-overlay">
+    <div class="error-card">
+      <h3>⚠ Unable to load recipes</h3>
+      <p>Something went wrong while fetching recipes.</p>
+      <p>Please check your connection and try again.</p>
+      <button id="retryBtn">Retry</button>
+    </div>
+  </div>
+`;
+
+document.getElementById("retryBtn").addEventListener("click", () => {
+    window.location.reload();
+});
         });
 });
