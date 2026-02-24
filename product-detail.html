@@ -25,6 +25,28 @@
     <button id="readBtn" class="speaker-btn">🔊 Read</button>
     <button id="stopBtn" class="speaker-btn">⏹ Stop</button>
   </div>
+     
+  <!-- ⭐ REVIEW SECTION -->
+<div class="review-section">
+  <h3>Leave a Review</h3>
+
+  <input type="text" id="reviewerName" placeholder="Your Name">
+
+  <select id="rating">
+    <option value="5">5 ⭐</option>
+    <option value="4">4 ⭐</option>
+    <option value="3">3 ⭐</option>
+    <option value="2">2 ⭐</option>
+    <option value="1">1 ⭐</option>
+  </select>
+
+  <textarea id="reviewText" placeholder="Write your review..."></textarea>
+
+  <button onclick="addReview()">Submit Review</button>
+
+  <h3>User Reviews</h3>
+  <div id="reviewsContainer"></div>
+</div>
 </div>
 
 <script>
@@ -115,7 +137,63 @@ stopBtn.addEventListener("click", () => {
   window.speechSynthesis.cancel();
   highlightLine(-1); // remove highlight
 });
+
+//  Load reviews when page loads
+document.addEventListener("DOMContentLoaded", loadReviews);
+
+function addReview() {
+  const name = document.getElementById("reviewerName").value.trim();
+  const rating = document.getElementById("rating").value;
+  const text = document.getElementById("reviewText").value.trim();
+
+  if (!name || !text) {
+    alert("Please fill all fields!");
+    return;
+  }
+
+  const key = "reviews_" + recipeName;
+
+  const review = { name, rating, text };
+
+  let reviews = JSON.parse(localStorage.getItem(key)) || [];
+  reviews.push(review);
+  localStorage.setItem(key, JSON.stringify(reviews));
+
+ function showToast() {
+  const toast = document.getElementById("toast");
+  toast.classList.add("show");
+
+  setTimeout(() => {
+    toast.classList.remove("show");
+  }, 3000);
+}
+
+  document.getElementById("reviewerName").value = "";
+  document.getElementById("reviewText").value = "";
+
+  loadReviews();
+}
+
+function loadReviews() {
+  const container = document.getElementById("reviewsContainer");
+  if (!container || !recipeName) return;
+
+  const key = "reviews_" + recipeName;
+  let reviews = JSON.parse(localStorage.getItem(key)) || [];
+
+  container.innerHTML = "";
+
+  reviews.forEach(r => {
+    container.innerHTML += `
+      <div class="review-card">
+        <strong>${r.name}</strong> - ${r.rating} ⭐
+        <p>${r.text}</p>
+      </div>
+    `;
+  });
+}
 </script>
+<div id="toast" class="toast">Review Submitted Successfully!</div>
 </body>
 
 </html>

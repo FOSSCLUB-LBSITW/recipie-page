@@ -134,3 +134,81 @@ body {
   padding: 2px 4px;
   border-radius: 4px;
 }
+
+/*  Review Section */
+.review-section {
+  margin-top: 40px;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 10px;
+}
+
+.review-section h3 {
+  margin-bottom: 10px;
+}
+
+
+.review-section select
+
+{
+    display: block;        
+  width: 20%;
+  margin-bottom: 15px;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+.review-section input,
+.review-section textarea {
+  display: block;        
+  width: 100%;
+  margin-bottom: 15px;
+  padding: 8px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Highlighted Submit Button */
+.review-section button {
+  display: block;        /* button in next line */
+  width: 30%;
+  padding: 10px;
+  margin:15px auto;
+  background-color: #ff6b6b;   /* highlighted color */
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.review-section button:hover {
+  background-color: #ff3b3b;
+}
+
+/* Review Cards */
+.review-card {
+  background: white;
+  padding: 10px;
+  margin-bottom: 10px;
+  border-radius: 6px;
+  border-left: 4px solid #ff6b6b;
+}
+.toast {
+  visibility: hidden;
+  min-width: 250px;
+  background-color: #28a745;
+  color: white;
+  text-align: center;
+  padding: 12px;
+  border-radius: 5px;
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.toast.show {
+  visibility: visible;
+}
