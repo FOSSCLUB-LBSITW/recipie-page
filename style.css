@@ -171,3 +171,25 @@ body {
 .error-card button:hover {
   background: #ff4c4c;
 }
+/* Time filter styling */
+#timeFilter {
+  padding: 10px;
+  border-radius: 6px;
+  border: none;
+  margin-left: 5px;
+  background: white;
+  cursor: pointer;
+}
+
+#timeFilter:hover {
+  background: #ffe0e0;
+}
+.time-badge {
+    display: inline-block;
+    background: #ff6b6b;
+    color: white;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    margin: 8px 0;
+}
