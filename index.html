@@ -32,10 +32,33 @@
   <!-- ✅ PRODUCTS SECTION -->
   <div class="container">
     <h2>All Recipes</h2>
+    <div class="filters">
+    <select id="categoryFilter">
+        <option value="all">All Categories</option>
+    </select>
+
+    <select id="areaFilter">
+        <option value="all">All Areas</option>
+    </select>
+</div>
     <div id="results" class="recipe-grid"></div>
   </div>
 
   <script src="script.js"></script>
+  <div class="filters">
+    <select id="categoryFilter">
+        <option value="all">All Categories</option>
+    </select>
+
+    <select id="areaFilter">
+        <option value="all">All Areas</option>
+    </select>
+
+    <select id="sortOption">
+        <option value="default">Sort: Default</option>
+        <option value="az">A → Z</option>
+    </select>
+</div>
 </body>
 
 </html>

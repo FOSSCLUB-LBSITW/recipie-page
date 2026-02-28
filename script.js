@@ -1,224 +1,171 @@
-document.getElementById("searchBtn").addEventListener("click", function() {
-    let query = document.getElementById("searchBox").value;
-    let resultsDiv = document.getElementById("results");
-    let timeValue = document.getElementById('timeFilter')?.value;
-
-    resultsDiv.innerHTML = "<p>Searching recipes for <b>" + query + "</b>...</p>";
-
-    fetch("https://www.themealdb.com/api/json/v1/1/search.php?s=" + query)
-    .then(res => res.json())
-    .then(data => {
-        let meals = data.meals;
-
-        if (!meals) {
-            resultsDiv.innerHTML = "<p>No recipes found. Try again!</p>";
-            return;
-        }
-
-        // Apply time filter to search results
-        if (timeValue) {
-            meals = meals.filter(meal => {
-                const text = (meal.strMeal + ' ' + (meal.strInstructions || '')).toLowerCase();
-                let time = 45; // default
-                
-                if (text.includes('salad') || text.includes('quick') || text.includes('fast') || text.includes('easy')) time = 20;
-                else if (text.includes('bake') || text.includes('roast') || text.includes('grill') || text.includes('pasta')) time = 45;
-                else if (text.includes('stew') || text.includes('slow') || text.includes('braise') || text.includes('simmer')) time = 90;
-                
-                if (timeValue === 'quick') return time <= 30;
-                if (timeValue === 'medium') return time > 30 && time <= 60;
-                if (timeValue === 'long') return time > 60;
-                return true;
-            });
-        }
-        
-        currentMeals = meals;
-        displayMeals(meals);
-    })
-    .catch(err => {
-       resultsDiv.innerHTML = `
-  <div class="error-overlay">
-    <div class="error-card">
-      <h3>⚠ Unable to load recipes</h3>
-      <p>Something went wrong while fetching recipes.</p>
-      <p>Please check your connection and try again.</p>
-      <button id="retryBtn">Retry</button>
-    </div>
-  </div>
-`;
-
-document.getElementById("retryBtn").addEventListener("click", () => {
-    window.location.reload();
-});
-    });
-});
-
-// Clear button functionality
-const clearBtn = document.getElementById("clearBtn");
-const searchBox = document.getElementById("searchBox");
+// ================= GLOBAL VARIABLES =================
+let allMeals = [];
+let currentMeals = [];
 const resultsDiv = document.getElementById("results");
 
-clearBtn.addEventListener("click", function () {
-    searchBox.value = "";        // clears input
-    resultsDiv.innerHTML = "";   // clears search results
-    document.getElementById('timeFilter').value = ""; // reset time filter
-    window.dispatchEvent(new Event("load")); // reload all recipes
-});
+// ================= SEARCH BUTTON =================
+document.getElementById("searchBtn").addEventListener("click", function () {
 
-function displayMeals(meals, showInstructions = true) {
-    resultsDiv.innerHTML = "";
+    const query = document.getElementById("searchBox").value.trim();
 
-    meals.forEach(meal => {
-        let div = document.createElement("div");
-        div.classList.add("recipe-card");
-        
-        // Add estimated time
-        const estTime = estimateTime(meal);
-        let timeBadge = '';
-        if (estTime <= 30) timeBadge = '⚡ Quick';
-        else if (estTime <= 60) timeBadge = '⏱️ Medium';
-        else timeBadge = '🕒 Long';
-
-        div.innerHTML = `
-            <a href="product-detail.html?name=${encodeURIComponent(meal.strMeal)}" class="recipe-link">
-                <img src="${meal.strMealThumb}" alt="${meal.strMeal}">
-                <h3>${meal.strMeal}</h3>
-                <div class="time-badge">${timeBadge} (${estTime} min)</div>
-                ${showInstructions ? `<p>${meal.strInstructions.substring(0, 100)}...</p>` : ""}
-            </a>
-        `;
-
-        resultsDiv.appendChild(div);
-    });
-}
-// ========== TIME-BASED FILTERING ==========
-let currentMeals = [];
-
-// Function to estimate cooking time
-function estimateTime(meal) {
-    const text = (meal.strMeal + ' ' + (meal.strInstructions || '')).toLowerCase();
-    if (text.includes('salad') || text.includes('quick') || text.includes('fast') || text.includes('easy')) return 20;
-    if (text.includes('bake') || text.includes('roast') || text.includes('grill') || text.includes('pasta')) return 45;
-    if (text.includes('stew') || text.includes('slow') || text.includes('braise') || text.includes('simmer')) return 90;
-    return 45;
-}
-
-// Function to filter meals by time
-function filterMealsByTime(meals, timeValue) {
-    if (!timeValue) return meals;
-    
-    return meals.filter(meal => {
-        const time = estimateTime(meal);
-        if (timeValue === 'quick') return time <= 30;
-        if (timeValue === 'medium') return time > 30 && time <= 60;
-        if (timeValue === 'long') return time > 60;
-        return true;
-    });
-}
-
-// Add time filter to search area
-function addTimeFilter() {
-    if (document.getElementById('timeFilter')) return;
-    
-    const timeFilter = document.createElement('select');
-    timeFilter.id = 'timeFilter';
-    timeFilter.innerHTML = `
-        <option value="">All Times</option>
-        <option value="quick">Quick (≤30 min)</option>
-        <option value="medium">Medium (31-60 min)</option>
-        <option value="long">Long (>60 min)</option>
-    `;
-    document.querySelector('.search-area').appendChild(timeFilter);
-    
-    timeFilter.addEventListener('change', function() {
-        applyFilters();
-    });
-}
-
-// Apply both category and time filters
-function applyFilters() {
-    const category = document.getElementById('categoryFilter').value;
-    const timeValue = document.getElementById('timeFilter').value;
-    
-    if (category === "") {
-        // No category filter, show all recipes with time filter
-        fetch("https://www.themealdb.com/api/json/v1/1/search.php?s=")
-            .then(res => res.json())
-            .then(data => {
-                if (!data.meals) return;
-                const filteredByTime = filterMealsByTime(data.meals, timeValue);
-                currentMeals = filteredByTime;
-                displayMeals(filteredByTime);
-            });
-    } else {
-        // Apply category filter first, then time filter
-        resultsDiv.innerHTML = "<p>Loading " + category + " recipes...</p>";
-        
-        fetch("https://www.themealdb.com/api/json/v1/1/filter.php?c=" + category)
-            .then(res => res.json())
-            .then(data => {
-                if (!data.meals) {
-                    resultsDiv.innerHTML = "<p>No recipes found.</p>";
-                    return;
-                }
-                
-                // Get full details for each meal
-                const mealPromises = data.meals.slice(0, 10).map(meal => 
-                    fetch(`https://www.themealdb.com/api/json/v1/1/lookup.php?i=${meal.idMeal}`)
-                        .then(res => res.json())
-                        .then(detailData => detailData.meals[0])
-                );
-                
-                Promise.all(mealPromises)
-                    .then(fullMeals => {
-                        const validMeals = fullMeals.filter(meal => meal !== null);
-                        const filteredByTime = filterMealsByTime(validMeals, timeValue);
-                        currentMeals = filteredByTime;
-                        displayMeals(filteredByTime, true);
-                    })
-                    .catch(() => {
-                        const filteredByTime = filterMealsByTime(data.meals, timeValue);
-                        currentMeals = filteredByTime;
-                        displayMeals(filteredByTime, false);
-                    });
-            });
+    if (!query) {
+        resultsDiv.innerHTML = "<p>Please enter a recipe name.</p>";
+        return;
     }
-}
 
-// Category filter
-document.getElementById("categoryFilter").addEventListener("change", function() {
-    applyFilters();
-});
+    resultsDiv.innerHTML = `<p>Searching recipes for <b>${query}</b>...</p>`;
 
-// Load all recipes on page load
-window.addEventListener("load", function () {
-    resultsDiv.innerHTML = "<p>Loading all recipes...</p>";
-    addTimeFilter();
-    
-    fetch("https://www.themealdb.com/api/json/v1/1/search.php?s=")
+    fetch("https://www.themealdb.com/api/json/v1/1/search.php?s=" + query)
         .then(res => res.json())
         .then(data => {
+
             if (!data.meals) {
                 resultsDiv.innerHTML = "<p>No recipes found.</p>";
                 return;
             }
-            currentMeals = data.meals;
-            displayMeals(data.meals);
+
+            allMeals = data.meals;
+            currentMeals = [...allMeals];
+
+            populateFilters();
+            applyFilters();
         })
         .catch(() => {
-           resultsDiv.innerHTML = `
-  <div class="error-overlay">
-    <div class="error-card">
-      <h3>⚠ Unable to load recipes</h3>
-      <p>Something went wrong while fetching recipes.</p>
-      <p>Please check your connection and try again.</p>
-      <button id="retryBtn">Retry</button>
-    </div>
-  </div>
-`;
-
-document.getElementById("retryBtn").addEventListener("click", () => {
-    window.location.reload();
-});
+            resultsDiv.innerHTML = "<p>Something went wrong while fetching recipes.</p>";
         });
+});
+
+
+// ================= DISPLAY MEALS =================
+function displayMeals(meals) {
+
+    resultsDiv.innerHTML = "";
+
+    if (meals.length === 0) {
+        resultsDiv.innerHTML = "<p>No meals match your filters.</p>";
+        return;
+    }
+
+    meals.forEach(meal => {
+
+        const estTime = estimateTime(meal);
+        const timeBadge =
+            estTime <= 30 ? "⚡ Quick" :
+            estTime <= 60 ? "⏱️ Medium" :
+            "🕒 Long";
+
+        resultsDiv.innerHTML += `
+            <div class="meal-card">
+                <img src="${meal.strMealThumb}" width="200">
+                <h3>${meal.strMeal}</h3>
+                <p>${meal.strCategory} | ${meal.strArea}</p>
+                <p>${timeBadge} (${estTime} min)</p>
+            </div>
+        `;
+    });
+}
+
+
+// ================= ESTIMATE TIME =================
+function estimateTime(meal) {
+    const text = (meal.strMeal + ' ' + (meal.strInstructions || '')).toLowerCase();
+
+    if (text.includes('salad') || text.includes('quick') || text.includes('fast') || text.includes('easy'))
+        return 20;
+
+    if (text.includes('bake') || text.includes('roast') || text.includes('grill') || text.includes('pasta'))
+        return 45;
+
+    if (text.includes('stew') || text.includes('slow') || text.includes('braise') || text.includes('simmer'))
+        return 90;
+
+    return 45;
+}
+
+
+// ================= TIME FILTER =================
+function filterMealsByTime(meals, timeValue) {
+
+    if (!timeValue) return meals;
+
+    return meals.filter(meal => {
+        const time = estimateTime(meal);
+
+        if (timeValue === 'quick') return time <= 30;
+        if (timeValue === 'medium') return time > 30 && time <= 60;
+        if (timeValue === 'long') return time > 60;
+
+        return true;
+    });
+}
+
+
+// ================= POPULATE CATEGORY & AREA =================
+function populateFilters() {
+
+    const categorySet = new Set();
+    const areaSet = new Set();
+
+    allMeals.forEach(meal => {
+        if (meal.strCategory) categorySet.add(meal.strCategory);
+        if (meal.strArea) areaSet.add(meal.strArea);
+    });
+
+    const categoryFilter = document.getElementById("categoryFilter");
+    const areaFilter = document.getElementById("areaFilter");
+
+    categoryFilter.innerHTML = '<option value="all">All Categories</option>';
+    areaFilter.innerHTML = '<option value="all">All Areas</option>';
+
+    categorySet.forEach(cat => {
+        categoryFilter.innerHTML += `<option value="${cat}">${cat}</option>`;
+    });
+
+    areaSet.forEach(area => {
+        areaFilter.innerHTML += `<option value="${area}">${area}</option>`;
+    });
+}
+
+
+// ================= APPLY ALL FILTERS =================
+function applyFilters() {
+
+    const category = document.getElementById("categoryFilter")?.value || "all";
+    const area = document.getElementById("areaFilter")?.value || "all";
+    const timeValue = document.getElementById("timeFilter")?.value || "";
+
+    let filtered = [...allMeals];
+
+    if (category !== "all") {
+        filtered = filtered.filter(meal => meal.strCategory === category);
+    }
+
+    if (area !== "all") {
+        filtered = filtered.filter(meal => meal.strArea === area);
+    }
+
+    if (timeValue) {
+        filtered = filterMealsByTime(filtered, timeValue);
+    }
+
+    currentMeals = filtered;
+    displayMeals(filtered);
+}
+
+
+// ================= FILTER LISTENERS =================
+document.getElementById("categoryFilter").addEventListener("change", applyFilters);
+document.getElementById("areaFilter").addEventListener("change", applyFilters);
+document.getElementById("timeFilter").addEventListener("change", applyFilters);
+
+
+// ================= CLEAR BUTTON =================
+document.getElementById("clearBtn").addEventListener("click", function () {
+
+    document.getElementById("searchBox").value = "";
+    document.getElementById("categoryFilter").value = "all";
+    document.getElementById("areaFilter").value = "all";
+    document.getElementById("timeFilter").value = "";
+
+    resultsDiv.innerHTML = "";
 });
