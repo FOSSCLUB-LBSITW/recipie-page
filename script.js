@@ -39,13 +39,12 @@ document.getElementById("searchBtn").addEventListener("click", function () {
 // ================= DISPLAY MEALS =================
 function displayMeals(meals) {
 
-    resultsDiv.innerHTML = "";
-
     if (meals.length === 0) {
         resultsDiv.innerHTML = "<p>No meals match your filters.</p>";
         return;
     }
 
+    let htmlContent = "";
     meals.forEach(meal => {
 
         const estTime = estimateTime(meal);
@@ -54,7 +53,7 @@ function displayMeals(meals) {
             estTime <= 60 ? "⏱️ Medium" :
             "🕒 Long";
 
-        resultsDiv.innerHTML += `
+        htmlContent += `
             <div class="meal-card">
                 <img src="${meal.strMealThumb}" width="200">
                 <h3>${meal.strMeal}</h3>
@@ -63,6 +62,7 @@ function displayMeals(meals) {
             </div>
         `;
     });
+    resultsDiv.innerHTML = htmlContent;
 }
 
 
@@ -114,16 +114,17 @@ function populateFilters() {
     const categoryFilter = document.getElementById("categoryFilter");
     const areaFilter = document.getElementById("areaFilter");
 
-    categoryFilter.innerHTML = '<option value="all">All Categories</option>';
-    areaFilter.innerHTML = '<option value="all">All Areas</option>';
-
+    let categoryHTML = '<option value="all">All Categories</option>';
     categorySet.forEach(cat => {
-        categoryFilter.innerHTML += `<option value="${cat}">${cat}</option>`;
+        categoryHTML += `<option value="${cat}">${cat}</option>`;
     });
+    categoryFilter.innerHTML = categoryHTML;
 
+    let areaHTML = '<option value="all">All Areas</option>';
     areaSet.forEach(area => {
-        areaFilter.innerHTML += `<option value="${area}">${area}</option>`;
+        areaHTML += `<option value="${area}">${area}</option>`;
     });
+    areaFilter.innerHTML = areaHTML;
 }
 
 
