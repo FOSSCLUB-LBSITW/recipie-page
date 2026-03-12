@@ -2,14 +2,23 @@
 let allMeals = [];
 let currentMeals = [];
 const resultsDiv = document.getElementById("results");
+const searchBox = document.getElementById("searchBox");
 
-// ================= SEARCH BUTTON =================
-document.getElementById("searchBtn").addEventListener("click", function () {
+// ================= DEBOUNCE UTILITY =================
+function debounce(func, delay) {
+    let timeoutId;
+    return function (...args) {
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => func.apply(this, args), delay);
+    };
+}
 
-    const query = document.getElementById("searchBox").value.trim();
-
+// ================= SEARCH LOGIC =================
+function performSearch(query) {
     if (!query) {
-        resultsDiv.innerHTML = "<p>Please enter a recipe name.</p>";
+        resultsDiv.innerHTML = "";
+        allMeals = [];
+        currentMeals = [];
         return;
     }
 
@@ -21,6 +30,8 @@ document.getElementById("searchBtn").addEventListener("click", function () {
 
             if (!data.meals) {
                 resultsDiv.innerHTML = "<p>No recipes found.</p>";
+                allMeals = [];
+                currentMeals = [];
                 return;
             }
 
@@ -33,6 +44,17 @@ document.getElementById("searchBtn").addEventListener("click", function () {
         .catch(() => {
             resultsDiv.innerHTML = "<p>Something went wrong while fetching recipes.</p>";
         });
+}
+
+// ================= SEARCH LISTENERS =================
+// Debounced real-time search
+searchBox.addEventListener("input", debounce((e) => {
+    performSearch(e.target.value.trim());
+}, 400));
+
+// Manual search button
+document.getElementById("searchBtn").addEventListener("click", function () {
+    performSearch(searchBox.value.trim());
 });
 
 
