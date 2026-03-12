@@ -181,16 +181,16 @@ function loadReviews() {
   const key = "reviews_" + recipeName;
   let reviews = JSON.parse(localStorage.getItem(key)) || [];
 
-  container.innerHTML = "";
-
+  let htmlContent = "";
   reviews.forEach(r => {
-    container.innerHTML += `
+    htmlContent += `
       <div class="review-card">
         <strong>${r.name}</strong> - ${r.rating} ⭐
         <p>${r.text}</p>
       </div>
     `;
   });
+  container.innerHTML = htmlContent;
 }
 </script>
 <div id="toast" class="toast">Review Submitted Successfully!</div>
