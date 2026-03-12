@@ -181,16 +181,26 @@ function loadReviews() {
   const key = "reviews_" + recipeName;
   let reviews = JSON.parse(localStorage.getItem(key)) || [];
 
-  let htmlContent = "";
+  container.innerHTML = ""; // Clear existing
+
   reviews.forEach(r => {
-    htmlContent += `
-      <div class="review-card">
-        <strong>${r.name}</strong> - ${r.rating} ⭐
-        <p>${r.text}</p>
-      </div>
-    `;
+    // 1. Create parent container
+    const card = document.createElement("div");
+    card.className = "review-card";
+
+    // 2. Safely create name and rating
+    const header = document.createElement("strong");
+    header.textContent = `${r.name} - ${r.rating} ⭐`;
+    
+    // 3. Safely create text paragraph
+    const paragraph = document.createElement("p");
+    paragraph.textContent = r.text;
+
+    // 4. Append elements
+    card.appendChild(header);
+    card.appendChild(paragraph);
+    container.appendChild(card);
   });
-  container.innerHTML = htmlContent;
 }
 </script>
 <div id="toast" class="toast">Review Submitted Successfully!</div>
